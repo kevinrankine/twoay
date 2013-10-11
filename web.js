@@ -1,36 +1,14 @@
 #!/usr/bin/env node
 
-var http = require('http');
-var rest = require('restler');
-var express = require('express');
+var rest = require('restler'),
+express = require('express'),
+app = express(), 
+server = http.createServer(app),
+io = require('socket.io').listen(server);
 
-var app = express();
-var server = http.createServer(app);
-var io = require('socket.io').listen(server);
+server.listen(8080);
 
-/*app.get('/', function (req, res) {
-    console.log("Request received!");
-    var from = {"lat" : req.query.from_lat, "lon" : req.query.from_lon};
-    var to = {"lat" : req.query.to_lat, "lon" : req.query.to_lon};
-    
-    var reqURL = "https://maps.googleapis.com/maps/api/directions/json?origin=" + from.lat + "," + from.lon+ "&destination=" + to.lat + "," + to.lon + "&sensor=false";
-    var instructions = "";
-    res.writeHead(200, {'Content-Type' : 'text/html'});
-    rest.get(reqURL).on('complete', function (result) {
-	console.log(result);
-	var map = result;
-	var directions = map.routes[0].legs[0].steps;
-	
-	for(var i = 0;i < directions.length;i++) {
-	    instructions += directions[i].html_instructions + "<br><br>";
-	}
-	res.write(instructions);
-	res.end();
-	console.log(res.headersSent);
-    });
-}); */
-
-app.get('/socket', function (req, res) {
+app.get('/', function (req, res) {
     res.sendfile('index.html');
 });
 
@@ -42,24 +20,28 @@ io.sockets.on('connection', function (socket) {
     console.log(numConnections);
     socket.on('coordinates', function(data) {
 	coords.push(data);
-	if (numConnections == 2) {
-	    from = coords[1];
-	    to = coords[0];
-	    var reqURL = "https://maps.googleapis.com/maps/api/directions/json?origin=" + from.lat + "," + from.lon+ "&destination=" + to.lat + "," + to.lon + "&sensor=false";
-	    rest.get(reqURL).on('complete', function (result) {
-		var map = result;
-		var directions = map.routes[0].legs[0].steps;
-		socket.emit("directions", directions);
-	    });
-	}
+
+    });
+    socket.on('disconnect', function () {
+	numConnections--;
+	coords = [];
     });
 });
 
-io.sockets.on('disconnect', function () {
-    coords = [];
-    numConnections--;
-    console.log(numConnections);
-});
+
+function updateUsers() {
+    if (numConnections == 2) {
+	from = coords[1];
+	to = coords[0];
+	var reqURL = "https://maps.googleapis.com/maps/api/directions/json?origin=" + from.lat + "," + from.lon+ "&destination=" + to.lat + "," + to.lon + "&sensor=false";
+	rest.get(reqURL).on('complete', function (result) {
+	    var map = result;
+	    var directions = map.routes[0].legs[0].steps;
+	    io.sockets.emit("directions", directions);
+	});
+    }
+}
+
+setInterval(updateUsers, 2000);
 
 
-server.listen(8080);

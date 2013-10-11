@@ -1,20 +1,24 @@
 {
   "name": "twoway",
   "version": "0.0.0",
-  "description": "",
-  "main": "test.js",
+  "description": "Two way mapping backend",
+  "main": "web.js",
   "dependencies": {
-    "async": "~0.2.9",
     "express": "~3.4.0",
+    "async": "~0.2.9",
     "restler": "~2.0.1",
     "socket.io": "~0.9.16"
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node web.js"
   },
   "repository": "",
-  "author": "",
-  "license": "BSD",
-  "gitHead": "7df8a2595d65365c6cc2c718b35031a603e41f97"
+  "keywords": [
+    "Maps",
+    "Meetup"
+  ],
+  "author": "Kevin Akos Rankine",
+  "license": "Closed",
+  "gitHead": "fe38c02c1025e2dfe31a5e772aee82a02111ea18"
 }
