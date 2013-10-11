@@ -3,10 +3,17 @@
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script type="text/javascript">
       var socket = io.connect("http://localhost:8080/");
-      socket.on("hello", function(data) {
-             alert("The server says hello!");
-             socket.emit("hello", {});
+      updateLocation();
+      socket.on("directions", function(data) {
+            document.write(data);
       });
+      function updateLocation() {
+             navigator.geolocation.getCurrentPosition(function(pos) {
+                   var lat = pos.coords.latitude;
+                   var lon = pos.coords.longitude;
+                   socket.emit("coordinates", {"lat" : lat, "lon" : lon});
+             });
+      }
     </script>
   </head>
   

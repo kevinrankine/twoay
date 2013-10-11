@@ -34,11 +34,32 @@ app.get('/socket', function (req, res) {
     res.sendfile('index.html');
 });
 
+var numConnections = 0;
+var coords = [];
 io.sockets.on('connection', function (socket) {
-    socket.emit("hello", {});
-    socket.on('hello', function(data) {
-	socket.emit("hello", {});
+    numConnections++;
+    console.log(coords);
+    console.log(numConnections);
+    socket.on('coordinates', function(data) {
+	coords.push(data);
+	if (numConnections == 2) {
+	    from = coords[1];
+	    to = coords[0];
+	    var reqURL = "https://maps.googleapis.com/maps/api/directions/json?origin=" + from.lat + "," + from.lon+ "&destination=" + to.lat + "," + to.lon + "&sensor=false";
+	    rest.get(reqURL).on('complete', function (result) {
+		var map = result;
+		var directions = map.routes[0].legs[0].steps;
+		socket.emit("directions", directions);
+	    });
+	}
     });
 });
+
+io.sockets.on('disconnect', function () {
+    coords = [];
+    numConnections--;
+    console.log(numConnections);
+});
+
 
 server.listen(8080);
