@@ -1,20 +1,20 @@
 {
   "name": "twoway",
   "version": "0.0.0",
-  "description": "Two way mapping application",
-  "main": "web.js",
+  "description": "",
+  "main": "test.js",
   "dependencies": {
+    "async": "~0.2.9",
     "express": "~3.4.0",
-    "restler": "~2.0.1"
+    "restler": "~2.0.1",
+    "socket.io": "~0.9.16"
   },
   "devDependencies": {},
   "scripts": {
-    "test": "node web.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": "",
-  "keywords": [
-    "Maps"
-  ],
-  "author": "kakosr",
-  "license": "BSD"
+  "author": "",
+  "license": "BSD",
+  "gitHead": "7df8a2595d65365c6cc2c718b35031a603e41f97"
 }
