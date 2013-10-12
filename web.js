@@ -5,12 +5,15 @@ http = require('http'),
 express = require('express'),
 app = express(), 
 server = http.createServer(app),
-io = require('socket.io').listen(server);
+io = require('socket.io').listen(server, {log: false });
 
 server.listen(8080);
 
 app.get('/', function (req, res) {
     res.sendfile('index.html');
+});
+app.get('/:user', function (req, res) {
+    
 });
 
 var numConnections = 0;
@@ -18,27 +21,21 @@ var coords = {};
 var users = [];
 
 io.sockets.on('connection', function (socket) {
-    numConnections++;
-    console.log(numConnections);
     socket.on('coordinates', function(data) {
-	if (!(socket.id in users))
+	if (users.indexOf(socket.id) == -1) {
 	    users.push(socket.id);
+	}
 	coords[socket.id] = data;
-	console.log(users);
 	console.log(coords);
-
     });
     socket.on('disconnect', function () {
-	numConnections--;
 	delete coords[socket.id];
 	users.splice(users.indexOf(socket.id), 1);
-	console.log(users);
-	console.log(coords);
     });
 });
 
 function updateUsers() {
-    if (numConnections == 2) {
+    if (users.length == 2) {
 	from = coords[users[0]];
 	to = coords[users[1]];
 	var reqURL = "https://maps.googleapis.com/maps/api/directions/json?origin=" + from.lat + "," + from.lon+ "&destination=" + to.lat + "," + to.lon + "&sensor=true&mode=walking";
@@ -50,5 +47,3 @@ function updateUsers() {
     }
 }
 setInterval(updateUsers, 2000);
-
-
