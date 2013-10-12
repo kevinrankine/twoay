@@ -6,6 +6,7 @@ http = require('http'),
 express = require('express'),
 app = express(), 
 server = http.createServer(app),
+routes = require('./routes'),
 io = require('socket.io').listen(server, {log: false });
 
 
@@ -13,15 +14,11 @@ app.configure(function() {
     app.set('port', process.env.PORT || 3000);
     app.set('views', __dirname + '/views');
     app.use(app.router);
-    app.use(express.static(path.join(__dirname, 'public')));
+    app.use(express.static(path.join(__dirname, 'static')));
 });
+
+app.get('/', routes.index);
 server.listen(8080);
-app.get('/', function (req, res) {
-    res.sendfile('static/index.html');
-});
-app.get('/:user', function (req, res) {
-    
-});
 
 var numConnections = 0;
 var coords = {};
