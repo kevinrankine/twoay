@@ -5,17 +5,7 @@ $(document).ready(function() {
 });
 
 function sendRequest() {
-    var requestingUser = $("input[name=requestingUser]").val();
-    var requestedUser = $("input[name=requestedUser]").val();
-    navigator.geolocation.getCurrentPosition(function(pos) {
-        var lat = pos.coords.latitude;
-        var lon = pos.coords.longitude;
-        socket.emit("directionsRequested", {"coordinates" : {"lat" : lat, 
-							     "lon" : lon}, 
-				    "requestingUser" : requestingUser, 
-				    "requestedUser" : requestedUser
-					   });
-    });
+    
 }
 /* 
    Requests directions to the user specified by the value of the text field.
