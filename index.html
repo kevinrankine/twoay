@@ -2,11 +2,16 @@
   <head>
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script type="text/javascript">
-      var socket = io.connect("http://localhost:8080/");
+      var socket = io.connect("http://kevinrankine.com:8080/");
       updateLocation();
       socket.on("directions", function(data) {
              document.body.innerHTML = "";
-             document.write(JSON.stringify(data));
+             var content = "";
+             for(var i = 0;i < data.length;i++) {
+		   content += data[i].html_instructions + "<br><br>";
+	     }
+	     document.body.innerHTML = content;
+	     updateLocation();
       });
       function updateLocation() {
              navigator.geolocation.getCurrentPosition(function(pos) {
@@ -19,6 +24,6 @@
   </head>
   
   <body>
-    Hello
+
   </body>
 </html>
