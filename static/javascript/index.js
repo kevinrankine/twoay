@@ -21,12 +21,8 @@ function sendRequest() {
    Requests directions to the user specified by the value of the text field.
    The function is fired off when the submit button is pressed.   
 */
-function requestUser() {
-    var user = $("input[name=requestedUser]").val();
-    socket.emit("user", {"user" : user});
-}
 
-socket.on("directions", function(directions) {
+socket.on("directions", function (directions) {
     document.body.innerHTML = "";
     var content = "";
     for(var i = 0;i < directions.length;i++) {
