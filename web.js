@@ -1,16 +1,23 @@
 #!/usr/bin/env node
 
 var rest = require('restler'),
+path = require('path'),
 http = require('http'),
 express = require('express'),
 app = express(), 
 server = http.createServer(app),
 io = require('socket.io').listen(server, {log: false });
 
-server.listen(8080);
 
+app.configure(function() {
+    app.set('port', process.env.PORT || 3000);
+    app.set('views', __dirname + '/views');
+    app.use(app.router);
+    app.use(express.static(path.join(__dirname, 'public')));
+});
+server.listen(8080);
 app.get('/', function (req, res) {
-    res.sendfile('index.html');
+    res.sendfile('static/index.html');
 });
 app.get('/:user', function (req, res) {
     
