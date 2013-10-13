@@ -18,7 +18,11 @@ app.configure(function() {
 });
 
 app.get('/', routes.index);
+
 server.listen(8080);
+console.log("The server has booted up!");
+
+/* past this lies the socket.io stuff */
 
 var numConnections = 0;
 var users = [];
@@ -40,6 +44,9 @@ io.sockets.on('connection', function (socket) {
 	}
 	coords[requestingUser] = newCoordinates;
     });
+    socket.on("locationUpdate", function(data) {
+	coords[data.user] = data.coordinates;
+    });
     socket.on('disconnect', function () {
 	delete coords[requestingUser];
 	users.splice(users.indexOf(requestingUser), 1);
@@ -50,7 +57,6 @@ function updateUser(socket, requestingUser, requestedUser) {
     from = coords[requestingUser];
     to = coords[requestedUser];
     if (from == undefined) {
-	clearInterval(this);
 	return;
     }
     if (to == undefined) {
