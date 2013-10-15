@@ -2,14 +2,18 @@ var socket = io.connect("http://kevinrankine.com:8080/");
 
 $(document).ready(function() {
     $("form").submit(function(event) { 
-	window.setInterval(sendRequest, 2000, event); 
+	window.setInterval(sendRequest, 2000); 
+	event.preventDefault();
     });
 });
 var requestingUser;
 var requestedUser;
-function sendRequest(event) {
-    requestingUser = $("input[name=requestingUser]").val();
-    requestedUser = $("input[name=requestedUser]").val();
+
+function sendRequest() {
+    if (requestingUser == undefined && requestedUser == undefined) {
+	requestingUser = $("input[name=requestingUser]").val();
+	requestedUser = $("input[name=requestedUser]").val();
+    }
     navigator.geolocation.getCurrentPosition(function(pos) {
         var lat = pos.coords.latitude;
         var lon = pos.coords.longitude;
@@ -19,7 +23,6 @@ function sendRequest(event) {
 				    "requestedUser" : requestedUser
 					   });
     });
-    event.preventDefault();
 }
 /* 
    Requests directions to the user specified by the value of the text field.

@@ -33,34 +33,35 @@ io.sockets.on('connection', function (socket) {
     var requestedUser;
     var newCoordinates;
     socket.on('directionsRequested', function(data) {
+	console.log
 	requestingUser = data.requestingUser;
 	requestedUser = data.requestedUser;
 	newCoordinates = data.coordinates;
-	console.log(requestingUser + " wants to know where " + requestedUser + " is. :)");
 	
 	if (users.indexOf(requestingUser) == -1) {
 	    users.push(requestingUser);
-	    //setInterval(updateUser, 3000, socket, requestingUser, requestedUser);
 	}
 	coords[requestingUser] = newCoordinates;
-    });
-    socket.on("locationUpdate", function(data) {
-	coords[data.user] = data.coordinates;
+	updateUser(socket, requestingUser, requestedUser);
     });
     socket.on("disconnect", function () {
-	delete coords[requestingUser];
-	users.splice(users.indexOf(requestingUser), 1);
+	if (requestingUser != undefined) {
+	    delete coords[requestingUser];
+	    users.splice(users.indexOf(requestingUser), 1);
+	}
     });
 });
-
+var n = 0;
 function updateUser(socket, requestingUser, requestedUser) {
+    console.log((++n) + "th call");
+    console.log("updateUser called!");
     from = coords[requestingUser];
     to = coords[requestedUser];
     if (from == undefined) {
 	return;
     }
     if (to == undefined) {
-	console.log("Looks like we ain't sending out shit this round to " + requestingUser);
+	//console.log("Looks like we ain't sending out shit this round to " + requestingUser);
 	return
     }
 
@@ -69,6 +70,6 @@ function updateUser(socket, requestingUser, requestedUser) {
 	var map = result;
 	var directions = map.routes[0].legs[0].steps;
 	socket.emit("directions", directions);
-	console.log("We sent out directions from " + requestingUser + " to " + requestedUser);
+//	console.log("We sent out directions from " + requestingUser + " to " + requestedUser);
     });
 }
