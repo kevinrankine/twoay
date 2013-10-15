@@ -40,14 +40,14 @@ io.sockets.on('connection', function (socket) {
 	
 	if (users.indexOf(requestingUser) == -1) {
 	    users.push(requestingUser);
-	    setInterval(updateUser, 3000, socket, requestingUser, requestedUser);
+	    //setInterval(updateUser, 3000, socket, requestingUser, requestedUser);
 	}
 	coords[requestingUser] = newCoordinates;
     });
     socket.on("locationUpdate", function(data) {
 	coords[data.user] = data.coordinates;
     });
-    socket.on('disconnect', function () {
+    socket.on("disconnect", function () {
 	delete coords[requestingUser];
 	users.splice(users.indexOf(requestingUser), 1);
     });
